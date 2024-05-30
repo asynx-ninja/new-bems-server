@@ -5,26 +5,26 @@ const express = require("express");
 const ConnectDB = require("./global/config/DB");
 const SocketIO = require("./global/config/SocketIO")
 
-const account_login = require('./src/account_login/account_login.route');
-const activity_logs = require('./src/activity_logs/activity_logs.route');
-const brgy_info = require('./src/brgy_info/brgy_info.route');
-const event_applications = require('./src/event_applications/event_applications.route');
-const event_forms = require('./src/event_forms/event_forms.route');
-const events = require('./src/events/events.route');
-const folders = require('./src/folders/folders.route');
-const inquiries = require('./src/inquiries/inquiries.route');
-const layout_doc = require('./src/layout_doc/layout_doc.route');
-const muni_abouts = require('./src/muni_abouts/muni_abouts.route');
+// const account_login = require('./src/account_login/account_login.route');
+// const activity_logs = require('./src/activity_logs/activity_logs.route');
+// const brgy_info = require('./src/brgy_info/brgy_info.route');
+// const event_applications = require('./src/event_applications/event_applications.route');
+// const event_forms = require('./src/event_forms/event_forms.route');
+// const events = require('./src/events/events.route');
+// const folders = require('./src/folders/folders.route');
+// const inquiries = require('./src/inquiries/inquiries.route');
+// const layout_doc = require('./src/layout_doc/layout_doc.route');
+// const muni_abouts = require('./src/muni_abouts/muni_abouts.route');
 const muni_services = require('./src/muni_services/muni_services.route');
-const muni_tourists = require('./src/muni_tourists/muni_tourists.route');
-const notifications = require('./src/notifications/notifications.route');
-const officials = require('./src/officials/officials.route');
-const patawags = require('./src/patawag/patawag.route');
-const patawag_doc = require('./src/patawag_doc/patawag_doc.route');
-const profile = require('./src/profile/profile.route');
-const service_forms = require('./src/service_forms/service_forms.route')
-const service_requests = require('./src/service_requests/service_requests.route');
-const services = require('./src/services/services.route');
+// const muni_tourists = require('./src/muni_tourists/muni_tourists.route');
+// const notifications = require('./src/notifications/notifications.route');
+// const officials = require('./src/officials/officials.route');
+// const patawags = require('./src/patawag/patawag.route');
+// const patawag_doc = require('./src/patawag_doc/patawag_doc.route');
+// const profile = require('./src/profile/profile.route');
+// const service_forms = require('./src/service_forms/service_forms.route')
+// const service_requests = require('./src/service_requests/service_requests.route');
+// const services = require('./src/services/services.route');
 
 dotenv.config();
 ConnectDB();

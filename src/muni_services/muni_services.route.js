@@ -8,7 +8,7 @@ const { GetMuniServices, AddMuniService, UpdateMuniService, ArchiveMuniService }
 /*
     GetMuniServices
     Description: Get All Municipality Services
-    
+
     @isArchived = query
 */
 router.get("/", GetMuniServices);
@@ -16,14 +16,24 @@ router.get("/", GetMuniServices);
 /*
     AddMuniServices
     Description: Get All Municipality Services
-    
+    Type: multipart/form-data
+
     @servicesinfo = body (json format, updated details)
     @file = new file
 */
 router.post("/", upload.single("file"), AddMuniService);
 
-// 
+/*
+    UpdateMuniServices
+    Description: Update Single Municipality Service
+    Type: multipart/form-data
+
+    @doc_id = query (document id to update)
+    @servicesinfo = body (json format, updated details)
+    @file = new file
+*/
 router.patch("/", upload.single("file"), UpdateMuniService);
+
 // 
 router.patch("/archived", ArchiveMuniService);
 
