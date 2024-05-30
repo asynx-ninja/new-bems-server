@@ -16,7 +16,8 @@ const chat = new Schema({
 }, { _id: false });
 
 const obj = new Schema({
-    service_form: { type: Schema.Types.ObjectId, ref: 'service_forms' },
+    answered_form: { type: Schema.Types.Mixed },
+    services: { type: Schema.Types.ObjectId, ref: 'services' },
     request_id: { type: String },
     files: { type: [file] },
     status: { type: String, default: 'For Review', enum: ['For Review', 'Cancelled', 'Rejected', 'Processing', 'Transaction Completed'] },
