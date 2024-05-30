@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const EventsApplication = require("../models/EventsApplicationModel");
-const GenerateID = require("../functions/GenerateID");
+const EventsApplication = require("./event_applications.model");
+const GenerateID = require("../../global/functions/GenerateID");
 
 const {
   createRequiredFolders,

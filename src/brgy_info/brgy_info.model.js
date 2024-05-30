@@ -18,7 +18,7 @@ const obj = new Schema({
     story: { type: String },
     mission: { type: String },
     vision: { type: String },
-    brgy: { type: String },
+    brgy: { type: String, uppercase: true, index: true },
     email: { type: String },
     address: { type: String },
     tel_no: { type: String },
@@ -28,7 +28,6 @@ const obj = new Schema({
 }, {
     virtuals: {
         id: { get() { return this._id; } },
-        brgy: { get() { return this.brgy.toUpperCase(); } }
     },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

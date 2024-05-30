@@ -21,14 +21,15 @@ const obj = new Schema({
     details: { type: String },
     fee: { type: Number },
     collections: { type: collections },
-    brgy: { type: String },
-    status: { type: String, enum: ["Approved", "Disapproved", "For Review"] },
+    brgy: { type: String, uppercase: true, index: true },
+    status: { type: String, default: "For Review", enum: ["Approved", "Disapproved", "For Review"] },
     isArchived: { type: Boolean, default: false },
 }, {
     virtuals: {
         id: { get() { return this._id; } },
-        brgy: { get() { return this.brgy.toUpperCase(); } }
     },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true,
 });
 

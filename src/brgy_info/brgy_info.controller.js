@@ -1,12 +1,8 @@
-const BrgyInformation = require("../models/BrgyInfoModel");
+const BrgyInformation = require("./brgy_info.model");
 const dotenv = require("dotenv");
 dotenv.config();
-const {
-    uploadFolderFiles,
-    deleteFolderFiles,
-} = require("../utils/Drive");
 
-const muniInfoID = process.env.MUNI_INFO;
+const { UploadFiles, DeleteFiles } = require("../../global/utils/Drive");
 
 const GetBrgyInfo = async (req, res) => {
     try {
@@ -57,15 +53,15 @@ const GetBrgys = async (req, res) => {
 };
 
 // CHECK
-const AddBrgyInfo = async (req, res) => {
+const CreateBrgyInfo = async (req, res) => {
     try {
-        // const { folder_id } = req.query;
+        const { folder_id } = req.query;
         const { body, files } = req;
         const { story, mission, vision, brgy, email, tel_no, address, theme } = JSON.parse(body.brgyinfo);
         let fileArray = [];
 
         for (let f = 0; f < files.length; f += 1) {
-            const { id, name } = await uploadFolderFiles(files[f], muniInfoID);
+            const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
             fileArray.push({
                 link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -99,7 +95,7 @@ const AddBrgyInfo = async (req, res) => {
 
 // CHECK
 const UpdateBrgyInfo = async (req, res) => {
-    const { brgy } = req.params;
+    const { brgy } = req.query;
     const { body, files } = req;
 
     const brgyData = JSON.parse(body.brgyinfo);
@@ -158,6 +154,6 @@ const UpdateBrgyInfo = async (req, res) => {
 module.exports = {
     GetBrgyInfo,
     GetBrgys,
-    AddBrgyInfo,
+    CreateBrgyInfo,
     UpdateBrgyInfo,
 };

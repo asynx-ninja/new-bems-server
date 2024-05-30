@@ -10,8 +10,9 @@ const SocketIO = require("./global/config/SocketIO")
 // const brgy_info = require('./src/brgy_info/brgy_info.route');
 // const event_applications = require('./src/event_applications/event_applications.route');
 // const event_forms = require('./src/event_forms/event_forms.route');
+// const events = require('./src/events/events.route');
+const folders = require('./src/folders/folders.route');
 const events = require('./src/events/events.route');
-// const folders = require('./src/folders/folders.route');
 // const inquiries = require('./src/inquiries/inquiries.route');
 // const layout_doc = require('./src/layout_doc/layout_doc.route');
 const muni_abouts = require('./src/muni_abouts/muni_abouts.route');
@@ -24,7 +25,7 @@ const muni_services = require('./src/muni_services/muni_services.route');
 // const profile = require('./src/profile/profile.route');
 // const service_forms = require('./src/service_forms/service_forms.route')
 // const service_requests = require('./src/service_requests/service_requests.route');
-// const services = require('./src/services/services.route');
+const services = require('./src/services/services.route');
 
 dotenv.config();
 ConnectDB();
@@ -51,8 +52,8 @@ app.use((req, res, next) => {
 // app.use("/api/brgy_info", brgy_info);
 // app.use("/api/applications", event_applications);
 // app.use("/api/event_forms", event_forms);
-app.use("/api/events", events);
-// app.use("/api/folders", folders);
+// app.use("/api/events", events);
+app.use("/api/folders", folders);
 // app.use("/api/inquiries", inquiries);
 // app.use("/api/layouts", layout_doc);
 app.use("/api/muni_abouts", muni_abouts);
@@ -65,7 +66,7 @@ app.use("/api/muni_services", muni_services);
 // app.use("/api/profile", profile);
 // app.use("/api/service_forms", service_forms);
 // app.use("/api/requests", service_requests);
-// app.use("/api/services", services);
+app.use("/api/services", services);
 
 app.get("/", (req, res) => {
     res.status(200).json({
