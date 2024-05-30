@@ -1,16 +1,23 @@
 const mongoose = require("mongoose");
-const User = require('./account_login.model')
+const User = require("./account_login.model");
 const BCrypt = require("../../global/config/BCrypt");
 const { Send, sendEmail } = require("../../global/config/Nodemailer");
 const GeneratePIN = require("../../global/functions/GeneratePIN");
 
 const GetCredentials = async (req, res) => {
   try {
-    const { username, password } = req.params;
+    const { username, password } = req.query;
 
     const result = await User.find(
       { username: username },
-      { password: 1, type: 1, email: 1, "address.brgy": 1, isApproved: 1, isArchived: 1 }
+      {
+        password: 1,
+        account_type: 1,
+        email: 1,
+        "address.brgy": 1,
+        isApproved: 1,
+        isArchived: 1,
+      }
     );
 
     if (result.length === 0 || !result) {
@@ -22,17 +29,21 @@ const GetCredentials = async (req, res) => {
     }
 
     // If the account is not approved, send an error message
-    if (result[0].isApproved === "Denied") {
+    if (result[0].acc_status === "Denied") {
       return res
         .status(400)
-        .json({ error: `Your account is ${result[0].isApproved}` });
-    } else if (result[0].isApproved === "Pending") {
+        .json({ error: `Your account is ${result[0].acc_status}` });
+    } else if (result[0].acc_status === "Pending") {
       // Mask part of the email address
       const emailParts = result[0].email.split("@");
       const maskedEmail = `${emailParts[0].slice(0, 3)}****@${emailParts[1]}`;
 
       return res.status(400).json({
         error: `Your account is still on pending. Please check your email: ${maskedEmail}`,
+      });
+    } else if (result[0].isArchived === false) {
+      return res.status(400).json({
+        error: `Something went wrong. Please contact the administrator`,
       });
     }
 
@@ -44,7 +55,7 @@ const GetCredentials = async (req, res) => {
 
 const SentPIN = async (req, res) => {
   try {
-    const { email } = req.params;
+    const { email } = req.query;
     const { type } = req.body;
 
     const found = await User.find({ email: email });
@@ -52,13 +63,12 @@ const SentPIN = async (req, res) => {
     if (found.length === 0)
       return res.status(400).json({ error: "Email not registered!" });
 
-    if (type !== found[0].type)
+    if (type !== found[0].account_type)
       return res.status(400).json({
         error: `Access denied: Only registered ${type} account can proceed.`,
       });
 
     const code = GeneratePIN();
-    console.log(code);
     const result = await Send(
       email,
       "Password Security Code",
@@ -77,7 +87,7 @@ const SentPIN = async (req, res) => {
 
     res.status(200).json({
       update,
-      type: found[0].type,
+      type: found[0].account_type,
       message: "Code has been successfully sent to your Email!",
     });
   } catch (err) {
@@ -91,7 +101,7 @@ const CheckEmail = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      res.status(200).json({ exists: true, type: existingUser.type });
+      res.status(200).json({ exists: true, type: existingUser.account_type });
     } else {
       res.status(200).json({ exists: false });
     }
@@ -104,7 +114,7 @@ const CheckEmail = async (req, res) => {
 // CHECK PIN
 const CheckPIN = async (req, res) => {
   try {
-    const { email, pin } = req.params;
+    const { email, pin } = req.query;
     const result = await User.find(
       { $and: [{ email: email }, { pin: pin }] },
       "_id"
@@ -120,7 +130,7 @@ const CheckPIN = async (req, res) => {
 
 const UpdateCredentials = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
     const { username, password } = req.body;
     console.log("mm", username);
     if (!mongoose.Types.ObjectId.isValid(id)) {

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const obj = new Schema({
     event: { type: Schema.Types.ObjectId, ref: 'events' },
-    form_title: { type: String },
+    form_name: { type: String },
     form: { type: Schema.Types.Mixed },
     isActive: { type: Boolean, default: false }
 }, {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const EventsApplication = require("./event_applications.model");
+const BrgyInfo = require("../brgy_info/brgy_info.model");
 const GenerateID = require("../../global/functions/GenerateID");
 
 const {
@@ -133,11 +134,16 @@ const CreateEventsApplication = async (req, res) => {
     const { app_folder_id } = req.query;
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
-    // console.log(newBody, files);
-
-    const app_id = GenerateID(newBody.event_name, newBody.brgy, "A");
-    const folder_id = await createRequiredFolders(app_id, app_folder_id);
     let fileArray = [];
+
+    const increment = await EventsApplication.countDocuments({}).exec()
+    const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
+
+    const index = brgys.findIndex((item) => item.brgy === brgy.toUpperCase());
+    const app_id = GenerateID(index + 1, "applications", increment + 1);
+
+    const folder_id = await createRequiredFolders(app_id, app_folder_id);
+   
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
