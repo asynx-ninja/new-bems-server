@@ -30,6 +30,8 @@ const obj = new Schema({
         id: { get() { return this._id; } },
         brgy: { get() { return this.brgy.toUpperCase(); } }
     },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true,
 });
 

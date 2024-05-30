@@ -35,6 +35,8 @@ const obj = new Schema({
     virtuals: {
         id: { get() { return this._id; } },
     },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true,
 });
 
