@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const upload = require("../config/Multer");
+const upload = require("../../global/config/Multer");
 
 const {
   GetAllBrgyFolders,
   GetSpecificBrgyFolders,
   CreateBrgyFolders,
-} = require("../controllers/FolderController");
+} = require("./folders.controller");
 
 router.get("/", GetAllBrgyFolders);
 router.get("/specific", GetSpecificBrgyFolders);

@@ -6,13 +6,13 @@ const upload = require("../../global/config/Multer");
 const {
     GetBrgyInfo,
     GetBrgys,
-    AddBrgyInfo,
+    CreateBrgyInfo,
     UpdateBrgyInfo,
 } = require("./brgy_info.controller");
 
 router.get("/", GetBrgyInfo);
-router.get("/allinfo", GetBrgys);
-router.post("/", upload.array("files", 10), AddBrgyInfo);
-router.patch("/:brgy", upload.array("files", 10), UpdateBrgyInfo);
+router.get("/all", GetBrgys);
+router.post("/", upload.array("files", 10), CreateBrgyInfo);
+router.patch("/", upload.array("files", 10), UpdateBrgyInfo);
 
 module.exports = router;

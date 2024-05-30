@@ -1,4 +1,4 @@
-const compareArrays = (array1, array2) => {
+const CompareArrays = (array1, array2) => {
     const difference = array1.filter((object1) => {
         return !array2.some((object2) => {
             return Object.keys(object1).every((key) => {
@@ -9,4 +9,4 @@ const compareArrays = (array1, array2) => {
     return difference;
 };
 
-module.exports = compareArrays;
+module.exports = CompareArrays;
