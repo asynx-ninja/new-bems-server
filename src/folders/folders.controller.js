@@ -1,9 +1,6 @@
-const Folder = require("../models/FolderModel");
+const Folder = require("./folders.model");
 
-const {
-  createBarangayFolder,
-  createRequiredFolders,
-} = require("../utils/Drive");
+const { CreateBrgyFolder, CreateFolder } = require("../../global/utils/Drive");
 
 const GetAllBrgyFolders = async (req, res) => {
   try {
@@ -20,6 +17,7 @@ const GetAllBrgyFolders = async (req, res) => {
 const GetSpecificBrgyFolders = async (req, res) => {
   try {
     const { brgy } = req.query;
+
     const result = await Folder.find({ brgy: brgy });
 
     return !result
@@ -34,41 +32,17 @@ const CreateBrgyFolders = async (req, res) => {
   try {
     const { brgy } = req.query;
 
-    const root_folder_id = await createBarangayFolder(brgy.toUpperCase());
-    const events_folder_id = await createRequiredFolders(
-      "EVENTS",
-      root_folder_id
-    );
-    const application_folder_id = await createRequiredFolders(
-      "APPLICATION",
-      root_folder_id
-    );
-    const request_folder_id = await createRequiredFolders(
-      "REQUESTS",
-      root_folder_id
-    );
-    const service_folder_id = await createRequiredFolders(
-      "SERVICES",
-      root_folder_id
-    );
-    const pfp_folder_id = await createRequiredFolders("PFP", root_folder_id);
-    const official_folder_id = await createRequiredFolders(
-      "OFFICIALS",
-      root_folder_id
-    );
-    const info_folder_id = await createRequiredFolders("INFO", root_folder_id);
-    const inquiries_folder_id = await createRequiredFolders(
-      "INQUIRIES",
-      root_folder_id
-    );
-    const verification_folder_id = await createRequiredFolders(
-      "VERIFICATION",
-      root_folder_id
-    );
-    const blotters_folder_id = await createRequiredFolders(
-      "BLOTTERS",
-      root_folder_id
-    );
+    const root_folder_id = await CreateBrgyFolder(brgy.toUpperCase());
+    const events_folder_id = await CreateFolder("EVENTS", root_folder_id);
+    const application_folder_id = await CreateFolder("APPLICATION", root_folder_id);
+    const request_folder_id = await CreateFolder("REQUESTS", root_folder_id);
+    const service_folder_id = await CreateFolder("SERVICES", root_folder_id);
+    const pfp_folder_id = await CreateFolder("PFP", root_folder_id);
+    const official_folder_id = await CreateFolder("OFFICIALS", root_folder_id);
+    const info_folder_id = await CreateFolder("INFO", root_folder_id);
+    const inquiries_folder_id = await CreateFolder("INQUIRIES", root_folder_id);
+    const verification_folder_id = await CreateFolder("VERIFICATION", root_folder_id);
+    const blotters_folder_id = await CreateFolder("BLOTTERS", root_folder_id);
 
     const result = await Folder.create({
       root: root_folder_id,

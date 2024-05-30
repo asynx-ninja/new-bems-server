@@ -11,9 +11,9 @@ const {
   GetAllPenApp,
   GetCountPenApp,
   CancelEventApplication,
-} = require("../controllers/EventsApplicationController");
+} = require("./event_applications.controller");
 
-const upload = require("../config/Multer");
+const upload = require("../../global/config/Multer");
 
 router.get("/specific/", GetEventsApplicationByUser);
 router.get("/", GetAllEventsApplication);
