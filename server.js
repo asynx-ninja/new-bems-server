@@ -46,26 +46,26 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api/auth", account_login);
-app.use("/api/logs", activity_logs);
-app.use("/api/brgy_info", brgy_info);
-app.use("/api/applications", event_applications);
-app.use("/api/event_forms", event_forms);
-app.use("/api/events", events);
-app.use("/api/folders", folders);
-app.use("/api/inquiries", inquiries);
-app.use("/api/layouts", layout_doc);
-app.use("/api/muni_abouts", muni_abouts);
+// app.use("/api/auth", account_login);
+// app.use("/api/logs", activity_logs);
+// app.use("/api/brgy_info", brgy_info);
+// app.use("/api/applications", event_applications);
+// app.use("/api/event_forms", event_forms);
+// app.use("/api/events", events);
+// app.use("/api/folders", folders);
+// app.use("/api/inquiries", inquiries);
+// app.use("/api/layouts", layout_doc);
+// app.use("/api/muni_abouts", muni_abouts);
 app.use("/api/muni_services", muni_services);
-app.use("/api/muni_tourists", muni_tourists);
-app.use("/api/notifications", notifications);
-app.use("/api/officials", officials);
-app.use("/api/patawags", patawags);
-app.use("/api/patawag_doc", patawag_doc);
-app.use("/api/profile", profile);
-app.use("/api/service_forms", service_forms);
-app.use("/api/requests", service_requests);
-app.use("/api/services", services);
+// app.use("/api/muni_tourists", muni_tourists);
+// app.use("/api/notifications", notifications);
+// app.use("/api/officials", officials);
+// app.use("/api/patawags", patawags);
+// app.use("/api/patawag_doc", patawag_doc);
+// app.use("/api/profile", profile);
+// app.use("/api/service_forms", service_forms);
+// app.use("/api/requests", service_requests);
+// app.use("/api/services", services);
 
 app.get("/", (req, res) => {
     res.status(200).json({
