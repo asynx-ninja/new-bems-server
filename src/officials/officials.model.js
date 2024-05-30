@@ -18,12 +18,14 @@ const obj = new Schema({
     fromYear: { type: Date },
     toYear: { type: Date },
     isArchived: { type: Boolean, default: false },
-    brgy: { type: String }
+    area: { type: String }
 }, {
     virtuals: {
         id: { get() { return this._id; } },
         fullName: { get() { return `${this.firstName} ${this.middleName[0]}. ${this.lastName} ${this.suffix}`; } },
     },
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true},
     timestamps: true,
 });
 
