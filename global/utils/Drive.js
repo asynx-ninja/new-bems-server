@@ -69,14 +69,11 @@ const UploadFiles = async (fileObject, folder_id) => {
 };
 
 // DELETE FOLDER FILES
-const DeleteFiles = async (fileID, folder_id) => {
+const DeleteFiles = async (fileID) => {
     try {
         const { data } = await google
             .drive({ version: "v3", auth: authorize })
-            .files.delete({
-                fileId: fileID,
-                parent: folder_id,
-            });
+            .files.delete({fileId: fileID});
 
         return data;
     } catch (err) {

@@ -16,7 +16,7 @@ const GetMuniServices = async (req, res) => {
             total: result.length
         });
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(400).send(err.message);
     }
 };
 
@@ -41,12 +41,13 @@ const AddMuniService = async (req, res) => {
 
         res.status(200).json(result);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(400).json({ error: err.message });
     }
 };
 
 const UpdateMuniService = async (req, res) => {
     try {
+        let id = null, name = null;
         const { doc_id } = req.query;
         const { body, file } = req;
 
@@ -56,32 +57,27 @@ const UpdateMuniService = async (req, res) => {
             return res.status(400).json({ error: "Invalid Municipality Service ID" });
         }
 
-        let id = null,
-            name = null;
-
         if (file) {
-            const obj = await uploadFolderFiles(file, process.env.MUNI_OFFERED_SERVICES);
+            const obj = await UploadFiles(file, process.env.MUNI_OFFERED_SERVICES);
             id = obj.id;
             name = obj.name;
 
             if (servicesInfos.icon.id !== "")
-                await deleteFolderFiles(servicesInfos.icon.id, process.env.MUNI_OFFERED_SERVICES);
+                await DeleteFiles(servicesInfos.icon.id);
         }
 
-        const result = await MuniService.findOneAndUpdate(
+        const result = await MuniService.findByIdAndUpdate(
             { _id: doc_id },
             {
-                $set: {
-                    name: servicesInfos.name,
-                    details: servicesInfos.details,
-                    icon: file
-                        ? {
-                            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-                            id,
-                            name,
-                        }
-                        : servicesInfos.icon,
-                },
+                name: servicesInfos.name,
+                details: servicesInfos.details,
+                icon: file
+                    ? {
+                        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+                        id,
+                        name,
+                    }
+                    : servicesInfos.icon,
             },
             { new: true }
         );
@@ -92,28 +88,27 @@ const UpdateMuniService = async (req, res) => {
 
         return res.status(200).json(result);
     } catch (err) {
-        console.error(err);
-        return res.status(500).send(err.message);
+        return res.status(400).send(err.message);
     }
 };
 
 const ArchiveMuniService = async (req, res) => {
     try {
-        const { id, archived } = req.params;
+        const { id, isArchived } = req.query;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ error: "No such information" });
+            return res.status(400).json({ error: "No Municipality Service found" });
         }
 
-        const result = await MuniService.findOneAndUpdate(
+        const result = await MuniService.findByIdAndUpdate(
             { _id: id },
-            { $set: { isArchived: archived } },
-            { returnOriginal: false, upsert: true }
+            { isArchived },
+            { new: true }
         );
 
         res.status(200).json(result);
     } catch (err) {
-        res.send(err.message);
+        res.status(400).json(err.message);
     }
 };
 
