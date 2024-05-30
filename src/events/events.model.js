@@ -23,13 +23,12 @@ const obj = new Schema({
     end_reg_date: { type: Date },
     attendees_limit: { type: Number },
     collections: { type: collections },
-    brgy: { type: String },
+    brgy: { type: String, uppercase: true },
     isOpen: { type: Boolean, default: false },
     isArchived: { type: Boolean, default: false },
 }, {
     virtuals: {
         id: { get() { return this._id; } },
-        brgy: { get() { return this.brgy.toUpperCase(); } }
     },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
