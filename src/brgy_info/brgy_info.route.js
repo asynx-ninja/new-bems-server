@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const upload = require("../config/Multer");
+const upload = require("../../global/config/Multer");
 
 const {
     GetBrgyInfo,
     GetBrgys,
     AddBrgyInfo,
     UpdateBrgyInfo,
-} = require("../controllers/BrgyInfoController");
+} = require("./brgy_info.controller");
 
 router.get("/", GetBrgyInfo);
 router.get("/allinfo", GetBrgys);

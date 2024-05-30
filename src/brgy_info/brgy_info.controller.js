@@ -1,4 +1,4 @@
-const BrgyInformation = require("../models/BrgyInfoModel");
+const BrgyInformation = require("./brgy_info.model");
 const dotenv = require("dotenv");
 dotenv.config();
 const {
