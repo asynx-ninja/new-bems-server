@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 // app.use("/api/brgy_info", brgy_info);
 // app.use("/api/applications", event_applications);
 // app.use("/api/event_forms", event_forms);
-// app.use("/api/events", events);
+app.use("/api/events", events);
 app.use("/api/folders", folders);
 // app.use("/api/inquiries", inquiries);
 // app.use("/api/layouts", layout_doc);

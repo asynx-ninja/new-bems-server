@@ -3,7 +3,7 @@ const router = express.Router();
 
 const upload = require("../../global/config/Multer");
 
-const { GetBarangayEvents } = require("./events.controller");
+const { GetBarangayEvents, CreateEvents, SearchBarangayEvents } = require("./events.controller");
 
 /*
     GetEventsServices
@@ -12,6 +12,7 @@ const { GetBarangayEvents } = require("./events.controller");
     @isArchived = query
 */
 router.get("/", GetBarangayEvents);
-
+router.get("/search", SearchBarangayEvents)
+router.post("/", upload.array("files", 10), CreateEvents);
 
 module.exports = router;
