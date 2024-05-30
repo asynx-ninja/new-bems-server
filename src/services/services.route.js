@@ -7,10 +7,9 @@ const {
     GetPendingBrgyServices,
     GetDistinctBrgyServices,
     CreateServices,
-    // UpdateServices,
-    // StatusService,
-    // ArchiveService,
-    // GetServiceAndForm,
+    UpdateServices,
+    ChangeStatusService,
+    ArchiveService,
 } = require("./services.controller");
 
 const upload = require("../../global/config/Multer");
@@ -65,9 +64,34 @@ router.get("/distinct_services", GetDistinctBrgyServices);
 */
 router.post("/", upload.array("files", 10), CreateServices);
 
-// router.patch("/:id", upload.array("files", 10), UpdateServices);
+/*
+    UpdateServices
+    Description: Update Brgy Service
+    Type: multipart/form-data
 
-// router.patch("/status/:id", StatusService);
-// router.patch("/archived/:id/:archived", ArchiveService);
+    @doc_id = document id query
+    @saved = saved data,
+    @service = whole document before update
+    @files = new files uploaded
+*/
+router.patch("/", upload.array("files", 10), UpdateServices);
+
+/*
+    StatusService
+    Description: Change Status of Brgy Service
+
+    @id = document id query
+    @status = new status query, ["Approved", "Disapproved", "For Review"]
+*/
+router.patch("/change_status", ChangeStatusService);
+
+/*
+    ArchiveService
+    Description: Archive Brgy Service
+
+    @id = document id query
+    @isArchived = true or false query
+*/
+router.patch("/archived", ArchiveService);
 
 module.exports = router;

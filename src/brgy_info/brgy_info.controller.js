@@ -61,7 +61,7 @@ const CreateBrgyInfo = async (req, res) => {
         let fileArray = [];
 
         for (let f = 0; f < files.length; f += 1) {
-            const { id, name } = await uploadFolderFiles(files[f], folder_id);
+            const { id, name } = await UploadFiles(files[f], folder_id);
 
             fileArray.push({
                 link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,

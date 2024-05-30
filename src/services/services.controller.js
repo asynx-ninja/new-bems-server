@@ -87,70 +87,6 @@ const GetDistinctBrgyServices = async (req, res) => {
     res.status(200).json(result)
 }
 
-const GetServiceAndForm = async (req, res) => {
-    try {
-        const { service_id } = req.query;
-
-        const result = await Service.aggregate([
-            {
-                $lookup: {
-                    from: "service_forms",
-                    localField: "service_id",
-                    foreignField: "service_id",
-                    as: "service_form",
-                },
-            },
-            { $unwind: "$service_form" }, // $unwind used for getting data in object or for one record only
-            {
-                $match: {
-                    $and: [{ service_id: service_id }],
-                },
-            },
-        ]);
-
-        return !result
-            ? res.status(400).json({ error: "No such Service Form" })
-            : res.status(200).json(result);
-    } catch (err) {
-        res.send(err.message);
-    }
-};
-
-const GetAllBrgyService = async (req, res) => {
-    try {
-        const { archived } = req.query;
-
-        const result = await Service.find({ isArchived: archived });
-
-        if (result.length === 0) {
-            return res.status(400).json({ error: "No services found." });
-        }
-
-        return res.status(200).json(result);
-    } catch (err) {
-        res.send(err.message);
-    }
-};
-
-
-
-const GetBrgyServiceBanner = async (req, res) => {
-    try {
-        const { brgy } = req.params;
-
-        const result = await Service.aggregate([
-            { $match: { brgy: brgy, isArchived: false } },
-            { $project: { _id: 0, banner: "$collections.banner.link" } },
-        ]);
-
-        return !result
-            ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
-            : res.status(200).json(result);
-    } catch (err) {
-        res.send(err.message);
-    }
-};
-
 const CreateServices = async (req, res) => {
     try {
         const { service_folder_id } = req.query;
@@ -161,8 +97,8 @@ const CreateServices = async (req, res) => {
         const increment = await Service.countDocuments({}).exec()
         const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
 
-        const index = brgys.indexOf((item) => item.brgy === brgy) + 1;
-        const service_id = GenerateID(index, "services", increment);
+        const index = brgys.findIndex((item) => item.brgy === brgy.toUpperCase());
+        const service_id = GenerateID(index + 1, "services", increment + 1);
 
         const folder_id = await CreateFolder(service_id, service_folder_id);
 
@@ -205,14 +141,14 @@ const CreateServices = async (req, res) => {
 
 const UpdateServices = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { doc_id } = req.query;
         let { body, files } = req;
         let currentFiles = [];
         body = JSON.parse(JSON.stringify(req.body));
         let { saved, service } = body;
         let banner = null, logo = null;
 
-        if (!mongoose.Types.ObjectId.isValid(id)) {
+        if (!mongoose.Types.ObjectId.isValid(doc_id)) {
             return res.status(400).json({ error: "No such service" });
         }
 
@@ -234,15 +170,15 @@ const UpdateServices = async (req, res) => {
         service = JSON.parse(body.service);
         const folder_id = service.collections.folder_id;
         const fullItem = service.collections.file;
-        const toBeDeletedItems = compareArrays(fullItem, currentFiles);
+        const toBeDeletedItems = CompareArrays(fullItem, currentFiles);
 
         toBeDeletedItems.forEach(async (item) => {
-            await deleteFolderFiles(item.id, folder_id);
+            await DeleteFiles(item.id);
         });
 
         if (files) {
             for (let f = 0; f < files.length; f += 1) {
-                const { id, name } = await uploadFolderFiles(files[f], folder_id);
+                const { id, name } = await UploadFiles(files[f], folder_id);
 
                 if (files[f].originalname === "banner") {
                     banner = {
@@ -251,7 +187,7 @@ const UpdateServices = async (req, res) => {
                         name,
                     };
 
-                    await deleteFolderFiles(service.collections.banner.id, folder_id);
+                    await DeleteFiles(service.collections.banner.id, folder_id);
                 } else if (files[f].originalname === "logo") {
                     logo = {
                         link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -259,7 +195,7 @@ const UpdateServices = async (req, res) => {
                         name,
                     };
 
-                    await deleteFolderFiles(service.collections.logo.id, folder_id);
+                    await DeleteFiles(service.collections.logo.id, folder_id);
                 } else {
                     fileArray.push({
                         link: `https://drive.google.com/file/d/${id}/view`,
@@ -270,8 +206,8 @@ const UpdateServices = async (req, res) => {
             }
         }
 
-        const result = await Service.findOneAndUpdate(
-            { _id: id },
+        const result = await Service.findByIdAndUpdate(
+            { _id: doc_id },
             {
                 name: service.name,
                 type: service.type,
@@ -294,18 +230,17 @@ const UpdateServices = async (req, res) => {
     }
 };
 
-const StatusService = async (req, res) => {
+const ChangeStatusService = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { isApproved } = req.body;
+        const { id, status } = req.query;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ error: "No such service" });
         }
 
-        const result = await Service.findOneAndUpdate(
+        const result = await Service.findByIdAndUpdate(
             { _id: id },
-            { $set: { isApproved: isApproved } },
+            { status: status },
             { new: true }
         );
 
@@ -317,16 +252,16 @@ const StatusService = async (req, res) => {
 
 const ArchiveService = async (req, res) => {
     try {
-        const { id, archived } = req.params;
+        const { id, isArchived } = req.query;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ error: "No such service" });
         }
 
-        const result = await Service.findOneAndUpdate(
+        const result = await Service.findByIdAndUpdate(
             { _id: id },
-            { $set: { isArchived: archived } },
-            { returnOriginal: false, upsert: true }
+            { isArchived: isArchived },
+            { new: true }
         );
 
         res.status(200).json(result);
@@ -335,13 +270,13 @@ const ArchiveService = async (req, res) => {
     }
 };
 
-
-
-
 module.exports = {
     GetBrgyService,
     GetServiceChart,
     GetPendingBrgyServices,
     GetDistinctBrgyServices,
     CreateServices,
+    UpdateServices,
+    ChangeStatusService,
+    ArchiveService,
 };
