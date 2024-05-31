@@ -15,14 +15,14 @@ const {
 
 const upload = require("../../global/config/Multer");
 
-router.get("/specific/", GetUserAppli);
-router.get("/", GetAllAppli);
-router.get("/completed", ApprovedAppli);
-router.get("/pendingevents", GetForReviewAppli);
-router.get("/countpendingevents", CountForReviewAppli);
-router.post("/", upload.array("files", 10), CreateEventsAppli);
-router.patch("/", upload.array("files", 10), ReplyToAppli);
-router.patch("/cancel/", ArchiveAppli);
-router.patch("/archived/", CancelAppli);
+router.get("/user_appli/", GetUserAppli);
+router.get("/all_appli/", GetAllAppli);
+router.get("/approved_appli/", ApprovedAppli);
+router.get("/for_review_appli", GetForReviewAppli);
+router.get("/count_for_review/", CountForReviewAppli);
+router.post("/create_appli/", upload.array("files", 10), CreateEventsAppli);
+router.patch("/reply_appli/", upload.array("files", 10), ReplyToAppli);
+router.patch("/cancel_appli/", ArchiveAppli);
+router.patch("/archived_appli/", CancelAppli);
 
 module.exports = router;

@@ -11,7 +11,7 @@ const { GetBarangayEvents, CreateEvents, GetAllOpenBrgyEvents, UpdateEvent, Arch
 
     @isArchived = query
 */
-router.get("/", GetBarangayEvents);
+router.get("/brgys_events/", GetBarangayEvents);
 /*
     GetOpenBarangayEvents
     Description: Get All Open Events in barangay
@@ -19,21 +19,21 @@ router.get("/", GetBarangayEvents);
     @isArchived = query
     @isOpen = query
 */
-router.get("/all", GetAllOpenBrgyEvents);
+router.get("/opened_events/", GetAllOpenBrgyEvents);
 /*
     Get Distinct event
     Description: Get Events for filter
 
     @brgy = query aggregate of collections and title
 */
-router.get("/get_distinct_events", getAllEvents);
+router.get("/distinct_events/", getAllEvents);
 /*
     Get Distinct event
     Description: Get Events for filter
 
     @brgy = query aggregate of collections and title
 */
-router.get("/specific", GetSpecificBarangayEvent);
+router.get("/specific_events/", GetSpecificBarangayEvent);
 /*
     Adding Events
     Description: Adding Events
@@ -41,7 +41,7 @@ router.get("/specific", GetSpecificBarangayEvent);
     @event_folder_id = query
     @event_name, details, date, end_reg_date, brgy, isOpen = JSON parse
 */
-router.post("/", upload.array("files", 10), CreateEvents);
+router.post("/create_event/", upload.array("files", 10), CreateEvents);
 /*
     UpdateEvent
     Description: Update Event
@@ -49,13 +49,13 @@ router.post("/", upload.array("files", 10), CreateEvents);
     @id = query
     @body = JSON PARSE
 */
-router.patch("/update", upload.array("files", 10), UpdateEvent);
+router.patch("/update_event/", upload.array("files", 10), UpdateEvent);
 /*
     Archive Event
     Description: Archiving Events
 
     @id , isArchived = Query
 */
-router.patch("/archive", ArchiveEvents);
+router.patch("/archive_event/", ArchiveEvents);
 
 module.exports = router;

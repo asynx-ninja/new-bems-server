@@ -5,7 +5,7 @@ const BrgyInfo = require("../brgy_info/brgy_info.model");
 const {
   createRequiredFolders,
   uploadFolderFiles,
-} = require("../utils/Drive");
+} = require("../../global/utils/Drive");
 
 const GetAllAppli = async (req, res) => {
   try {
