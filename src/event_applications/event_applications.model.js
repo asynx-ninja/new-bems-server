@@ -8,11 +8,11 @@ const file = new Schema({
     name: { type: String }
 }, { _id: false });
 
-
 const obj = new Schema({
     event_form: { type: Schema.Types.ObjectId, ref: 'event_forms' },
     application_id: { type: String },
     files: { type: [file] },
+    form: { type: Schema.Types.Mixed },
     status: { type: String, default: 'For Review', enum: ['For Review', 'Cancelled', 'Rejected', 'Approved'] },
     isArchived: { type: Boolean, default: false },
     folder_id: { type: String }

@@ -11,6 +11,6 @@ const {
 router.get("/all_events_form/", GetAllEventsForm);
 router.get("/active_form/", GetActiveForm);
 router.post("/create_event_form/", CreateEventsForm);
-router.patch("/upadate_event_form/", UpdateEventsForm);
+router.patch("/update_event_form/", UpdateEventsForm);
 
 module.exports = router;

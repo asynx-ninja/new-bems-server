@@ -20,9 +20,9 @@ const GetAllEventsForm = async (req, res) => {
 
 const GetActiveForm = async (req, res) => {
   try {
-    const { event_doc_id  } = req.query;
+    const { event_doc_id } = req.query;
 
-    const result = await EventsForm.find({ $and: [{ event: event_doc_id }, { isActive: true }] }).populate('events');
+    const result = await EventsForm.find({ $and: [{ event: event_doc_id }, { isActive: true }] });
 
     return !result
       ? res.status(400).json({ error: "No such Events Form" })
@@ -34,9 +34,12 @@ const GetActiveForm = async (req, res) => {
 
 const CreateEventsForm = async (req, res) => {
   try {
-    const { brgy, event_id, checked } = req.query;
-    const { form, section, title } = req.body;
+    const { event_doc_id } = req.query;
+    const { form, section, form_name, isActive } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(event_doc_id)) {
+      return res.status(400).json({ error: "Not Valid Event form" });
+  }
     const newForm = [form, section];
 
     const result = await EventsForm.create({
@@ -54,18 +57,19 @@ const CreateEventsForm = async (req, res) => {
 
 const UpdateEventsForm = async (req, res) => {
   try {
-    const { event } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(event._id)) {
-      return res.status(400).json({ error: "No such service form" });
+    const { form, form_name, isActive } = req.body;
+    const {form_id} = req.query
+    
+    if (!mongoose.Types.ObjectId.isValid(form_id)) {
+      return res.status(400).json({ error: "No such event form" });
     }
 
     const result = await EventsForm.findByIdAndUpdate(
-      { _id: event._id },
+      { _id: form_id },
       {
-        form_name: event.form_name,
-        form: event.form,
-        isActive: event.isActive,
+        form_name: form_name,
+        form: form.form,
+        isActive: isActive,
       },
       { new: true }
     );

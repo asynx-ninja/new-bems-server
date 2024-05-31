@@ -8,7 +8,7 @@ const SocketIO = require("./global/config/SocketIO")
 // const account_login = require('./src/account_login/account_login.route');
 // const activity_logs = require('./src/activity_logs/activity_logs.route');
 const brgy_info = require('./src/brgy_info/brgy_info.route');
-// const event_applications = require('./src/event_applications/event_applications.route');
+const event_applications = require('./src/event_applications/event_applications.route');
 const event_forms = require('./src/event_forms/event_forms.route');
 const events = require('./src/events/events.route');
 const folders = require('./src/folders/folders.route');
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 // app.use("/api/auth", account_login);
 // app.use("/api/logs", activity_logs);
 app.use("/api/brgy_info", brgy_info);
-// app.use("/api/applications", event_applications);
+app.use("/api/applications", event_applications);
 app.use("/api/event_forms", event_forms);
 app.use("/api/events", events);
 app.use("/api/folders", folders);

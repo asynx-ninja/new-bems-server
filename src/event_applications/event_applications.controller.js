@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const EventsApplication = require("./event_applications.model");
 const BrgyInfo = require("../brgy_info/brgy_info.model");
 const GenerateID = require("../../global/functions/GenerateID");
-const BrgyInfo = require("../brgy_info/brgy_info.model");
+
 const {
-  createRequiredFolders,
-  uploadFolderFiles,
+  CreateFolder,
+  UploadFiles,
 } = require("../../global/utils/Drive");
 
 const GetAllAppli = async (req, res) => {
@@ -130,18 +130,24 @@ const CountForReviewAppli = async (req, res) => {
 
 const CreateEventsAppli = async (req, res) => {
   try {
-    const { app_folder_id, brgy } = req.query;
-    const { body, files } = req;
-    const newBody = JSON.parse(body.form);
-    // console.log(newBody, files);
+    const { app_folder_id, brgy, form_id } = req.query;
+    const {  files } = req;
+    // const newBody = JSON.parse(body.form);
+    const {body} = req.body;
 
-    const app_id = GenerateID(newBody.event_name, newBody.brgy, "A");
-    const folder_id = await createRequiredFolders(app_id, app_folder_id);
+    const increment = await EventsApplication.countDocuments({}).exec()
+    const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
+
+    const index = brgys.findIndex((item) => item.brgy === brgy.toUpperCase());
+
+    const appli_id = GenerateID(index + 1, "applications", increment + 1);
+    const folder_id = await CreateFolder(appli_id, app_folder_id);
+    
     let fileArray = [];
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
-        const { id, name } = await uploadFolderFiles(files[f], folder_id);
+        const { id, name } = await UploadFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
@@ -154,11 +160,11 @@ const CreateEventsAppli = async (req, res) => {
     }
 
     const result = await EventsApplication.create({
-      event_form: newBody.form,
-      application_id: app_id,
+      event_form: form_id,
+      application_id: appli_id,
+      form: body,
       files: fileArray.length > 0 ? fileArray : [],
       status: "For Review",
-      response: [],
       isArchived: false,
       folder_id: folder_id,
     });
