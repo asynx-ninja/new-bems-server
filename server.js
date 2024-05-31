@@ -56,6 +56,7 @@ app.use("/api/folders", folders);
 // app.use("/api/inquiries", inquiries);
 // app.use("/api/layouts", layout_doc);
 app.use("/api/muni_abouts", muni_abouts);
+app.use("/api/muni_abouts", muni_abouts);
 // app.use("/api/muni_services", muni_services);
 app.use("/api/muni_tourists", muni_tourists);
 app.use("/api/notifications", notifications);

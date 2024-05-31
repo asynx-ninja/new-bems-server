@@ -15,13 +15,9 @@ const chat = new Schema({
     file: { type: [file] },
 }, { _id: false });
 
-const format = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'profile' },
-}, { _id: false })
-
 const personnel = new Schema({
-    complainant: { type: [format] },
-    defendant: { type: [format] }
+    complainant: [{ type: Schema.Types.ObjectId, ref: 'profile' }],
+    defendant: [{ type: Schema.Types.ObjectId, ref: 'profile' }]
 }, { _id: false })
 
 const obj = new Schema({

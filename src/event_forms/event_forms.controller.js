@@ -34,12 +34,9 @@ const GetActiveForm = async (req, res) => {
 
 const CreateEventsForm = async (req, res) => {
   try {
-    const { event_doc_id } = req.query;
-    const { form, section, form_name, isActive } = req.body;
+    const { brgy, event_id, checked } = req.query;
+    const { form, section, title } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(event_doc_id)) {
-      return res.status(400).json({ error: "Not Valid Events Form" });
-    }
     const newForm = [form, section];
 
     const result = await EventsForm.create({
@@ -81,7 +78,7 @@ const UpdateEventsForm = async (req, res) => {
 
 module.exports = {
   GetAllEventsForm,
+  GetActiveForm,
   CreateEventsForm,
   UpdateEventsForm,
-  GetActiveForm,
 };

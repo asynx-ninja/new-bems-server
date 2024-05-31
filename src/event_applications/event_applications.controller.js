@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 const EventsApplication = require("./event_applications.model");
 const BrgyInfo = require("../brgy_info/brgy_info.model");
 const GenerateID = require("../../global/functions/GenerateID");
-
+const BrgyInfo = require("../brgy_info/brgy_info.model");
 const {
   createRequiredFolders,
   uploadFolderFiles,
-} = require("../utils/Drive");
+} = require("../../global/utils/Drive");
 
-const GetAllEventsApplication = async (req, res) => {
+const GetAllAppli = async (req, res) => {
   try {
     const { brgy, archived, status, title } = req.query;
 
@@ -36,8 +36,7 @@ const GetAllEventsApplication = async (req, res) => {
   }
 };
 
-
-const GetEventsApplicationByUser = async (req, res) => {
+const GetUserAppli = async (req, res) => {
   try {
     const { user_id, event_name, archived } = req.query;
 
@@ -61,13 +60,13 @@ const GetEventsApplicationByUser = async (req, res) => {
   }
 };
 
-const CountCompleted = async (req, res) => {
+const ApprovedAppli = async (req, res) => {
   try {
     const { brgy, event_id } = req.query;
 
     const completedCount = await EventsApplication.countDocuments({
       $and: [
-        { brgy: brgy, event_id: event_id, status: "Application Completed" },
+        { brgy: brgy, event_id: event_id, status: "Approved" },
       ],
     });
 
@@ -77,7 +76,7 @@ const CountCompleted = async (req, res) => {
   }
 };
 
-const GetAllPenApp = async (req, res) => {
+const GetForReviewAppli = async (req, res) => {
   try {
     const { isArchived, page, brgy } = req.query;
     const itemsPerPage = 5; // Number of items per page
@@ -86,7 +85,7 @@ const GetAllPenApp = async (req, res) => {
     const query = {
       brgy,
       isArchived: isArchived,
-      status: "Pending",
+      status: "For Review",
     };
 
     const totalEventsApplication = await EventsApplication.countDocuments(
@@ -110,13 +109,13 @@ const GetAllPenApp = async (req, res) => {
   }
 };
 
-const GetCountPenApp = async (req, res) => {
+const CountForReviewAppli = async (req, res) => {
   try {
     const { isArchived, brgy } = req.query;
     const query = {
       brgy,
       isArchived: isArchived,
-      status: "Pending",
+      status: "For Review",
     };
     const result = await EventsApplication.find(query);
 
@@ -129,21 +128,16 @@ const GetCountPenApp = async (req, res) => {
   }
 };
 
-const CreateEventsApplication = async (req, res) => {
+const CreateEventsAppli = async (req, res) => {
   try {
-    const { app_folder_id } = req.query;
+    const { app_folder_id, brgy } = req.query;
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
-    let fileArray = [];
+    // console.log(newBody, files);
 
-    const increment = await EventsApplication.countDocuments({}).exec()
-    const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
-
-    const index = brgys.findIndex((item) => item.brgy === brgy.toUpperCase());
-    const app_id = GenerateID(index + 1, "applications", increment + 1);
-
+    const app_id = GenerateID(newBody.event_name, newBody.brgy, "A");
     const folder_id = await createRequiredFolders(app_id, app_folder_id);
-   
+    let fileArray = [];
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
@@ -160,14 +154,12 @@ const CreateEventsApplication = async (req, res) => {
     }
 
     const result = await EventsApplication.create({
+      event_form: newBody.form,
       application_id: app_id,
-      event_id: newBody.event_id,
-      event_name: newBody.event_name,
-      form: newBody.form,
-      file: fileArray.length > 0 ? fileArray : [],
-      brgy: newBody.brgy,
+      files: fileArray.length > 0 ? fileArray : [],
+      status: "For Review",
       response: [],
-      version: newBody.version,
+      isArchived: false,
       folder_id: folder_id,
     });
 
@@ -177,7 +169,7 @@ const CreateEventsApplication = async (req, res) => {
   }
 };
 
-const RespondToEventsApplication = async (req, res) => {
+const ReplyToAppli = async (req, res) => {
   try {
     const { app_id, user_type } = req.query;
     const { body, files } = req;
@@ -187,7 +179,6 @@ const RespondToEventsApplication = async (req, res) => {
       message,
       status,
       date,
-      isRepliable,
       folder_id,
       last_sender,
       last_array,
@@ -223,7 +214,6 @@ const RespondToEventsApplication = async (req, res) => {
               message: last_sender.message,
               date: last_sender.date,
               file: last_sender.file,
-              isRepliable: false,
             },
           },
         }
@@ -239,7 +229,6 @@ const RespondToEventsApplication = async (req, res) => {
             message: message,
             date: date,
             file: fileArray.length > 0 ? fileArray : null,
-            isRepliable: isRepliable,
           },
         },
         $set: {
@@ -255,7 +244,7 @@ const RespondToEventsApplication = async (req, res) => {
   }
 };
 
-const ArchiveEventsApplication = async (req, res) => {
+const ArchiveAppli= async (req, res) => {
   try {
     const { id, archived } = req.query;
 
@@ -275,7 +264,7 @@ const ArchiveEventsApplication = async (req, res) => {
   }
 };
 
-const CancelEventApplication = async (req, res) => {
+const CancelAppli = async (req, res) => {
   try {
     const { application_id, status } = req.query;
 
@@ -300,13 +289,13 @@ const CancelEventApplication = async (req, res) => {
 };
 
 module.exports = {
-  GetAllEventsApplication,
-  GetEventsApplicationByUser,
-  CreateEventsApplication,
-  RespondToEventsApplication,
-  ArchiveEventsApplication,
-  CountCompleted,
-  GetAllPenApp,
-  GetCountPenApp,
-  CancelEventApplication,
+  GetAllAppli,
+  GetUserAppli,
+  ApprovedAppli,
+  GetForReviewAppli,
+  CountForReviewAppli,
+  CreateEventsAppli,
+  ReplyToAppli,
+  ArchiveAppli,
+  CancelAppli,
 };
