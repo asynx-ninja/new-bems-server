@@ -8,9 +8,9 @@ const {
   GetActiveForm,
 } = require("./event_forms.controller");
 
-router.get("/", GetAllEventsForm);
-router.get("/check", GetActiveForm);
-router.post("/", CreateEventsForm);
-router.patch("/", UpdateEventsForm);
+router.get("/all_events_form/", GetAllEventsForm);
+router.get("/active_form/", GetActiveForm);
+router.post("/create_event_form/", CreateEventsForm);
+router.patch("/upadate_event_form/", UpdateEventsForm);
 
 module.exports = router;

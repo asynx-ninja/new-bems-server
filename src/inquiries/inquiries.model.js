@@ -27,7 +27,7 @@ const obj = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'profile' },
     inquiry_id: { type: String },
     compose: { type: compose },
-    status: { type: String, default: 'Submitted', enum: ['Submitted', 'In Progress', 'Completed'] },
+    status: { type: String, default: 'Submitted', enum: ['Submitted', 'In Progress', 'Resolved'] },
     response: { type: [chat] },
     isArchived: { type: Boolean, default: false },
     folder_id: { type: String }
