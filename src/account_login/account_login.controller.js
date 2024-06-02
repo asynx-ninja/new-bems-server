@@ -29,7 +29,7 @@ const Login = async (req, res) => {
     else {
       const user = await User.find(
         { username: username },
-        { _id: 1, acc_status: 1, password: 1, isArchived: 1 }
+        { _id: 1, acc_status: 1, password: 1, isArchived: 1, account_type: 1, brgy: 1, }
       );
 
       const valid = await CheckUser(user, password, res);
