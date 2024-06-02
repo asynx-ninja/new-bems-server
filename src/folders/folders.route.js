@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const upload = require("../../global/config/Multer");
+const RequireAuth = require("../../global/middleware/RequireAuth")
 
 const {
   GetAllBrgyFolders,
@@ -9,6 +9,7 @@ const {
   CreateBrgyFolders,
 } = require("./folders.controller");
 
+router.use(RequireAuth)
 router.get("/", GetAllBrgyFolders);
 router.get("/specific", GetSpecificBrgyFolders);
 router.post("/", CreateBrgyFolders);

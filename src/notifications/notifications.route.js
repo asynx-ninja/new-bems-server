@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const {
   GetAllNotifications,
   CreateNotificationByUser,
@@ -11,6 +12,7 @@ const {
 
 // const upload = require("../config/Multer");
 
+router.use(RequireAuth)
 /*
     GetAllNotifications
     Description: Get All Tourist

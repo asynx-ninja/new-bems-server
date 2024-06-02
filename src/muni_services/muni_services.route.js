@@ -3,8 +3,11 @@ const router = express.Router();
 
 const upload = require("../../global/config/Multer");
 
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const { GetMuniServices, AddMuniService, UpdateMuniService, ArchiveMuniService } = require("./muni_services.controller");
 
+
+router.use(RequireAuth)
 /*
     GetMuniServices
     Description: Get All Municipality Services

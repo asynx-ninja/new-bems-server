@@ -1,186 +1,140 @@
 const mongoose = require("mongoose");
+
 const User = require("./account_login.model");
+const Profile = require("../profile/profile.model")
+const BrgyInfo = require("../brgy_info/brgy_info.model")
+
 const BCrypt = require("../../global/config/BCrypt");
-const { Send, sendEmail } = require("../../global/config/Nodemailer");
-const GeneratePIN = require("../../global/functions/GeneratePIN");
+// const { Send, sendEmail } = require("../../global/config/Nodemailer");
 
-const GetCredentials = async (req, res) => {
+const GenerateID = require("../../global/functions/GenerateID");
+// const GeneratePIN = require("../../global/functions/GeneratePIN");
+const GetAccountType = require("../../global/functions/GetAccountType");
+const ReturnValidID = require("../../global/functions/ReturnValidID");
+const CreateToken = require("../../global/functions/CreateToken");
+const ValidateInput = require("../../global/functions/ValidateInput");
+const CheckUser = require("../../global/functions/CheckUser");
+
+const Login = async (req, res) => {
   try {
-    const { username, password } = req.query;
+    const { username, password } = req.body;
+    const type = ValidateInput(username)
 
-    const result = await User.find(
-      { username: username },
-      {
-        password: 1,
-        account_type: 1,
-        email: 1,
-        "address.brgy": 1,
-        isApproved: 1,
-        isArchived: 1,
+    if (type === "email") {
+      res.status(200).json("hahaha xD")
+    }
+    else if (type === "contact") {
+      res.status(200).json("hahaha xD")
+    }
+    else {
+      const user = await User.find(
+        { username: username },
+        { _id: 1, acc_status: 1, password: 1, isArchived: 1 }
+      );
+
+      const valid = await CheckUser(user, password, res);
+
+      if (valid) {
+        const token = CreateToken(user._id)
+        res.status(200).json({ user: user[0], token: token })
       }
-    );
-
-    if (result.length === 0 || !result) {
-      return res.status(400).json({ error: `No such user` });
-    }
-
-    if (!(await BCrypt.compare(password, result[0].password))) {
-      return res.status(400).json({ error: `Wrong password` });
-    }
-
-    // If the account is not approved, send an error message
-    if (result[0].acc_status === "Denied") {
-      return res
-        .status(400)
-        .json({ error: `Your account is ${result[0].acc_status}` });
-    } else if (result[0].acc_status === "Pending") {
-      // Mask part of the email address
-      const emailParts = result[0].email.split("@");
-      const maskedEmail = `${emailParts[0].slice(0, 3)}****@${emailParts[1]}`;
-
-      return res.status(400).json({
-        error: `Your account is still on pending. Please check your email: ${maskedEmail}`,
-      });
-    } else if (result[0].isArchived === false) {
-      return res.status(400).json({
-        error: `Something went wrong. Please contact the administrator`,
-      });
-    }
-
-    res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const SentPIN = async (req, res) => {
-  try {
-    const { email } = req.query;
-    const { type } = req.body;
-
-    const found = await User.find({ email: email });
-
-    if (found.length === 0)
-      return res.status(400).json({ error: "Email not registered!" });
-
-    if (type !== found[0].account_type)
-      return res.status(400).json({
-        error: `Access denied: Only registered ${type} account can proceed.`,
-      });
-
-    const code = GeneratePIN();
-    const result = await Send(
-      email,
-      "Password Security Code",
-      "4 Digit PIN",
-      code
-    );
-
-    if (!result.response) return res.status(400).json({ error: "Error email" });
-
-    const update = await User.findOneAndUpdate(
-      { email: email },
-      {
-        $set: { pin: code },
-      }
-    );
-
-    res.status(200).json({
-      update,
-      type: found[0].account_type,
-      message: "Code has been successfully sent to your Email!",
-    });
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const CheckEmail = async (req, res) => {
-  try {
-    const { email } = req.query;
-    const existingUser = await User.findOne({ email });
-
-    if (existingUser) {
-      res.status(200).json({ exists: true, type: existingUser.account_type });
-    } else {
-      res.status(200).json({ exists: false });
     }
   } catch (error) {
-    console.error("Error checking email:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(400).json({ error: error.message });
   }
-};
+}
 
-// CHECK PIN
-const CheckPIN = async (req, res) => {
+const RegisterResident = async (req, res) => {
   try {
-    const { email, pin } = req.query;
-    const result = await User.find(
-      { $and: [{ email: email }, { pin: pin }] },
-      "_id"
-    );
+    const { verification_folder_id } = req.query;
+    const { body, files } = req;
+    const user = JSON.parse(body.user);
+    const selfie = files.pop();
 
-    return result.length === 0
-      ? res.status(400).json({ error: `No such user` })
-      : res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
+    const increment = await Profile.countDocuments({}).exec();
+    const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
+    const index = brgys.findIndex((item) => item.brgy === user.brgy) + 1;
 
-const UpdateCredentials = async (req, res) => {
-  try {
-    const { id } = req.query;
-    const { username, password } = req.body;
-    console.log("mm", username);
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such user" });
+    if (index === -1) {
+      res.status(400).json({ error: 'Barangay not found. Try again' });
     }
 
-    const result = await User.findOneAndUpdate(
-      { _id: id },
-      {
-        $set: {
-          username: username,
-          password: await BCrypt.hash(password),
-        },
-      },
-      { new: true }
-    );
+    const user_id = GenerateID(index + 1, "resident", increment + 1);
 
-    res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
+    const created_user = await Profile.create({
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      birthday: user.birthday,
+      address: user.address,
+      verification: await ReturnValidID(user_id, user.verification, files, verification_folder_id, selfie),
+    })
+
+    if (!created_user)
+      res.status(400).json({ error: 'User cannot create. Try again' })
+
+    await User.create({
+      user_id: user_id,
+      email: user.email,
+      contact: user.contact,
+      username: user.username,
+      password: await BCrypt.hash(user.password),
+      account_type: 'Resident',
+      brgy: user.address.brgy,
+      profile: created_user.id,
+    })
+
+    res.sendStatus(201);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
   }
-};
+}
 
-const UpdatePasswordOnly = async (req, res) => {
+const RegisterStaffMuni = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const user = req.body
+    const increment = await Profile.countDocuments({}).exec();
+    const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
+    const index = brgys.findIndex((item) => item.brgy === user.brgy) + 1;
 
-    const result = await User.findOneAndUpdate(
-      { email: email },
-      {
-        $set: {
-          password: await BCrypt.hash(password),
-        },
-      },
-      { new: true }
-    );
+    if (index === -1) {
+      res.status(400).json({ error: 'Barangay not found. Try again' });
+    }
 
-    return !result
-      ? res.status(400).json({ error: `No such user` })
-      : res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
+    const user_id = GenerateID(index + 1, user.type, increment + 1);
+
+    const created_user = await Profile.create({
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      birthday: user.birthday,
+      address: user.address,
+    })
+
+    if (!created_user)
+      res.status(400).json({ error: 'User cannot create. Try again' })
+
+    await User.create({
+      user_id: user_id,
+      email: user.email,
+      contact: user.contact,
+      username: user.username,
+      password: await BCrypt.hash(user.password),
+      account_type: GetAccountType(user.type),
+      brgy: user.address.brgy,
+      profile: created_user.id,
+      acc_status: 'Fully Verified'
+    })
+
+    res.sendStatus(201);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
   }
-};
+}
 
 module.exports = {
-  GetCredentials,
-  SentPIN,
-  CheckEmail,
-  CheckPIN,
-  UpdateCredentials,
-  UpdatePasswordOnly,
+  Login,
+  RegisterResident,
+  RegisterStaffMuni,
 };
+

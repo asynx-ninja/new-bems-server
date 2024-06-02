@@ -28,7 +28,7 @@ const obj = new Schema({
     brgy: { type: String },
     responses: { type: [chat] },
     folder_id: { type: String },
-    status: { type: String, default: "In Progress", enum: ["In Progress", "Resolved"] },
+    status: { type: String, default: "New", enum: ["New", "In Progress", "Resolved"] },
     isArchived: { type: Boolean, default: false },
 }, {
     virtuals: {

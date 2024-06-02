@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const {
   GetAllAppli,
   GetUserAppli,
@@ -15,6 +16,7 @@ const {
 
 const upload = require("../../global/config/Multer");
 
+router.use(RequireAuth)
 router.get("/user_appli/", GetUserAppli);
 router.get("/all_appli/", GetAllAppli);
 router.get("/approved_appli/", ApprovedAppli);

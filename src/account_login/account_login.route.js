@@ -2,21 +2,15 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    GetCredentials,
-    SentPIN,
-    CheckEmail,
-    CheckPIN,
-    UpdateCredentials,
-    UpdatePasswordOnly,
+    Login,
+    RegisterResident,
+    RegisterStaffMuni
 } = require("./account_login.controller");
 
 const upload = require("../../global/config/Multer");
 
-router.get("/check_pin/", CheckPIN);
-router.get("/", GetCredentials);
-router.patch("/send_pin/", SentPIN);
-router.patch("/pass/.", UpdatePasswordOnly);
-router.get("/findemail/", CheckEmail);
-router.patch("/", UpdateCredentials);
+router.post("/login", Login);
+router.post("/register_resident", upload.array('files', 10), RegisterResident);
+router.post("/register_staff_muni", RegisterStaffMuni);
 
 module.exports = router;

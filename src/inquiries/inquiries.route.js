@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../../global/config/Multer");
+const RequireAuth = require("../../global/middleware/RequireAuth")
 
 const {
   GetInq,
@@ -15,6 +16,7 @@ const {
   GetTotalInqStatus,
 } = require("./inquiries.controller");
 
+router.use(RequireAuth)
 router.get("/", GetInq);
 router.get("/inquiries_percent", GetInqStatus);
 router.get("/admininquiries", GetMuniInq);

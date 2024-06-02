@@ -3,9 +3,10 @@ const router = express.Router();
 
 const upload = require("../../global/config/Multer");
 
-
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const { GetAboutusInformation, AddAboutusInfo, UpdateAboutusInfo, ArchiveAboutus } = require("./muni_abouts.controller");
 
+router.use(RequireAuth)
 /*
     GetMunicipalInformation
     Description: Get Municipal About us Information

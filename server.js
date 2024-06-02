@@ -5,7 +5,7 @@ const express = require("express");
 const ConnectDB = require("./global/config/DB");
 const SocketIO = require("./global/config/SocketIO")
 
-// const account_login = require('./src/account_login/account_login.route');
+const account_login = require('./src/account_login/account_login.route');
 // const activity_logs = require('./src/activity_logs/activity_logs.route');
 const brgy_info = require('./src/brgy_info/brgy_info.route');
 const event_applications = require('./src/event_applications/event_applications.route');
@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
-// app.use("/api/auth", account_login);
+app.use("/api/auth", account_login);
 // app.use("/api/logs", activity_logs);
 app.use("/api/brgy_info", brgy_info);
 app.use("/api/applications", event_applications);

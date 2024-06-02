@@ -12,8 +12,10 @@ const {
     ArchiveService,
 } = require("./services.controller");
 
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const upload = require("../../global/config/Multer");
 
+router.use(RequireAuth)
 /*
     GetBrgyService
     Description: Get Brgy Service based on filters

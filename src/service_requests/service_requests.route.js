@@ -22,8 +22,10 @@ const {
     CancelRequest,
 } = require("../controllers/RequestController");
 
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const upload = require("../config/Multer");
 
+router.use(RequireAuth)
 router.get("/", GetAllRequest);
 router.get("/specific/", GetRequestByUser);
 router.get("/pendingrequest", GetAllPenReq);

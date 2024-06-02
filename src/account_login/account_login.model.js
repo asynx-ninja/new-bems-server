@@ -12,17 +12,16 @@ const obj = new Schema({
     contact: { type: String, required: true, index: true },
     username: { type: String, required: true, index: true },
     password: { type: String, required: true, index: true },
-    account_type: { type: String, required: true, index: true, enum: ['Head Admin', 'Brgy Admin', 'Staff', 'Resident'] },
-    acc_status: { type: String, required: true, index: true, enum: ['For Review', 'Partially Verified', 'Fully Verified', 'Denied'] },
+    account_type: { type: String, required: true, index: true, enum: ['Head Admin', 'Barangay Admin', 'Barangay Staff', 'Resident'] },
+    acc_status: { type: String, required: true, index: true, default: 'For Review', enum: ['For Review', 'Partially Verified', 'Fully Verified', 'Denied'] },
     isArchived: { type: Boolean, required: true, index: true, default: false },
     otp: { type: String },
     pin: { type: String },
-    brgy: { type: String, required: true },
+    brgy: { type: String, required: true, uppercase: true, index: true },
     profile: { type: Schema.Types.ObjectId, ref: 'profile' },
 }, {
     virtuals: {
         id: { get() { return this._id; } },
-        brgy: { get() { return this.brgy.toUpperCase(); } }
     },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

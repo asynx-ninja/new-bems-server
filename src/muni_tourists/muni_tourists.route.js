@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../../global/config/Multer");
 
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const {
   GetTouristSpotInformation,
   GetSpecificTouristInfo,
@@ -10,6 +11,7 @@ const {
   ArchiveTouristSpot,
 } = require("./muni_tourists.controller");
 
+router.use(RequireAuth)
 /*
     GetMuniServices
     Description: Get All Tourist

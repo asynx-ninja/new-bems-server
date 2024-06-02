@@ -4,15 +4,15 @@ const moment = require("moment");
 const Schema = mongoose.Schema;
 
 const address = new Schema({
-    street: { type: String, uppercase: true },
-    brgy: { type: String, uppercase: true, index: true },
-    city: { type: String, uppercase: true },
+    street: { type: String, uppercase: true, default: '' },
+    brgy: { type: String, uppercase: true, default: '', index: true },
+    city: { type: String, uppercase: true, default: '' },
 }, { _id: false });
 
 const file = new Schema({
-    link: { type: String },
-    id: { type: String },
-    name: { type: String }
+    link: { type: String, default: '' },
+    id: { type: String, default: '' },
+    name: { type: String, default: '' }
 }, { _id: false });
 
 const struct = new Schema({
@@ -26,39 +26,54 @@ const socials = new Schema({
     twitter: { type: struct },
 }, { _id: false });
 
+const struct_valid_id = new Schema({
+    id_type: { type: String, default: '' },
+    id_number: { type: String, default: '' },
+    file: { type: file, default: { ...file } }
+}, { _id: false });
+
 const verification = new Schema({
     user_folder_id: { type: String, default: "" },
-    primary_id: { type: String, default: "" },
-    primary_file: { type: [file] },
-    secondary_id: { type: String, default: "" },
-    secondary_file: { type: [file] },
-    selfie: { type: file },
+    valid_id: { type: [struct_valid_id], default: [] },
+    selfie: { type: file, default: { ...file } },
 }, { _id: false })
 
 const obj = new Schema({
-    firstName: { type: String },
-    middleName: { type: String },
-    lastName: { type: String },
-    suffix: { type: String },
-    religion: { type: String },
+    firstName: { type: String, default: '' },
+    middleName: { type: String, default: '' },
+    lastName: { type: String, default: '' },
+    suffix: { type: String, default: '' },
+    religion: { type: String, default: '' },
     birthday: { type: Date },
-    age: { type: Number },
-    sex: { type: String, enum: ['Male', 'Female'] },
-    address: { type: address },
-    occupation: { type: String },
-    civil_status: { type: String, enum: ['Single', 'Married', 'Widowed', 'Legally Separated'] },
+    age: { type: Number, default: 0 },
+    sex: { type: String, default: 'Male', enum: ['Male', 'Female'] },
+    address: { type: address, default: { ...address } },
+    occupation: { type: String, default: '' },
+    civil_status: { type: String, default: 'Single', enum: ['Single', 'Married', 'Widowed', 'Legally Separated'] },
     isVoter: { type: Boolean, default: false },
     isHead: { type: Boolean, default: false },
-    avatar: { type: file },
-    socials: { type: socials },
-    verification: { type: verification }
+    avatar: { type: file, default: { ...file } },
+    socials: { type: socials, default: { ...socials } },
+    verification: { type: verification, default: { ...verification } }
 }, {
     virtuals: {
         id: { get() { return this._id; } },
-        fullName: { get() { return `${this.firstName} ${this.middleName} ${this.lastName} ${this.suffix}`; } },
-        age: { get() { return this.birthday ? moment().diff(this.birthday, 'years', false) : 0; } },
-        fullAddress: { get() { return `${this.address.street} ${this.address.brgy} ${this.address.city}, Philippines` } }
+        fullName: {
+            get() {
+                const trimmed = `${this.middleName} ${this.lastName} ${this.suffix}`;
+                return `${this.firstName} ${trimmed.trim()}`.toUpperCase();
+            }
+        },
+        fullNameInitial: {
+            get() {
+                const trimmed = `${this.middleName === '' ? '' : this.middleName[0] + '.'} ${this.lastName} ${this.suffix}`;
+                return `${this.firstName} ${trimmed.trim()}`.toUpperCase();
+            }
+        },
+        fullAddress: { get() { return `${this.address.street} ${this.address.brgy} ${this.address.city}, PHILIPPINES` } }
     },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true,
 });
 
