@@ -3,10 +3,10 @@ const router = express.Router();
 
 const upload = require("../../global/config/Multer");
 
-// const RequireAuth = require("../../global/middleware/RequireAuth")
+const RequireAuth = require("../../global/middleware/RequireAuth")
 const { GetBarangayEvents, CreateEvents, GetAllOpenBrgyEvents, UpdateEvent, ArchiveEvents, UpdateAttendees, GetSpecificBarangayEvent, getAllEvents } = require("./events.controller");
 
-// router.use(RequireAuth)
+router.use(RequireAuth)
 /*
     GetEventsServices
     Description: Get All Events within the barangay
