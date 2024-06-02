@@ -19,11 +19,12 @@ const obj = new Schema({
     answered_form: { type: Schema.Types.Mixed },
     service_form: { type: Schema.Types.ObjectId, ref: 'service_forms' },
     request_id: { type: String },
-    files: { type: [file] },
+    files: { type: [file], default: null },
     status: { type: String, default: 'For Review', enum: ['For Review', 'Cancelled', 'Rejected', 'Processing', 'Transaction Completed'] },
-    response: { type: [chat] },
+    response: { type: [chat], default: [] },
     isArchived: { type: Boolean, default: false },
-    folder_id: { type: String }
+    folder_id: { type: String, default: '' },
+    brgy: { type: String, default: '' }
 }, {
     virtuals: {
         id: { get() { return this._id; } },

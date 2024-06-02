@@ -9,9 +9,15 @@ const file = new Schema({
 }, { _id: false });
 
 const theme = new Schema({
-    primary_bg: { type: String },
-    secondary_bg: { type: String },
-    accent_colors: { type: [String] },
+    name: { type: String },
+    scheme: {
+        bg_primary: { type: String },
+        primary: { type: String },
+        secondary: { type: String },
+        accent: { type: String },
+        neutral: { type: String },
+        text: { type: String },
+    }
 }, { _id: false });
 
 const obj = new Schema({

@@ -18,20 +18,13 @@ const GetAllServiceForm = async (req, res) => {
 const CreateServiceForm = async (req, res) => {
     try {
         const { service_doc_id } = req.query;
-        const { form, section, form_name, isActive } = req.body;
+        const service_form = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(service_doc_id)) {
             return res.status(400).json({ error: "Not Valid Brgy Service" });
         }
 
-        const newForm = [form, section];
-
-        const result = await ServicesForm.create({
-            services: service_doc_id,
-            form_name: form_name,
-            form: newForm,
-            isActive: isActive,
-        });
+        const result = await ServicesForm.create({ ...service_form });
 
         return res.json(result);
     } catch (err) {
@@ -41,7 +34,7 @@ const CreateServiceForm = async (req, res) => {
 
 const UpdateServiceForm = async (req, res) => {
     try {
-        const { service } = req.body;
+        const service = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(service._id)) {
             return res.status(400).json({ error: "No such service form" });
@@ -49,11 +42,7 @@ const UpdateServiceForm = async (req, res) => {
 
         const result = await ServicesForm.findByIdAndUpdate(
             { _id: service._id },
-            {
-                form_name: service.form_name,
-                form: service.form,
-                isActive: service.isActive,
-            },
+            {...service},
             { new: true }
         );
 

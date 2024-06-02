@@ -44,7 +44,7 @@ const Login = async (req, res) => {
   }
 }
 
-const RegisterResident = async (req, res) => {
+const RegisterWithVerify = async (req, res) => {
   try {
     const { verification_folder_id } = req.query;
     const { body, files } = req;
@@ -90,7 +90,7 @@ const RegisterResident = async (req, res) => {
   }
 }
 
-const RegisterStaffMuni = async (req, res) => {
+const RegisterWithoutVerify = async (req, res) => {
   try {
     const user = req.body
     const increment = await Profile.countDocuments({}).exec();
@@ -134,7 +134,7 @@ const RegisterStaffMuni = async (req, res) => {
 
 module.exports = {
   Login,
-  RegisterResident,
-  RegisterStaffMuni,
+  RegisterWithVerify,
+  RegisterWithoutVerify,
 };
 

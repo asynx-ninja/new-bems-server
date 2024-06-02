@@ -22,7 +22,7 @@ const officials = require('./src/officials/officials.route');
 // const patawag_doc = require('./src/patawag_doc/patawag_doc.route');
 // const profile = require('./src/profile/profile.route');
 const service_forms = require('./src/service_forms/service_forms.route')
-// const service_requests = require('./src/service_requests/service_requests.route');
+const service_requests = require('./src/service_requests/service_requests.route');
 const services = require('./src/services/services.route');
 
 dotenv.config();
@@ -62,7 +62,7 @@ app.use("/api/officials", officials);
 // app.use("/api/patawag_doc", patawag_doc);
 // app.use("/api/profile", profile);
 app.use("/api/service_forms", service_forms);
-// app.use("/api/requests", service_requests);
+app.use("/api/requests", service_requests);
 app.use("/api/services", services);
 
 app.get("/", (req, res) => {
