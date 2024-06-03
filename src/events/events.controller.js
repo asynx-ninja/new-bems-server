@@ -61,7 +61,7 @@ const CreateEvents = async (req, res) => {
     const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
 
     const index = brgys.findIndex((item) => item.brgy === brgy) + 1;
-    const event_id = GenerateID(index + 1, "events", increment + 1);
+    const event_id = GenerateID(index + (index === -1 ? 1 : 0), "events", increment + 1);
     const folder_id = await CreateFolder(event_id, event_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
@@ -85,8 +85,8 @@ const CreateEvents = async (req, res) => {
       event_id,
       event_name,
       details,
-      event_date: date, 
-      end_reg_date, 
+      event_date: date,
+      end_reg_date,
       brgy,
       collections: {
         folder_id,
@@ -256,4 +256,4 @@ const getAllEvents = async (req, res) => {
   res.status(200).json(result)
 }
 
-module.exports = { GetBarangayEvents, CreateEvents, GetAllOpenBrgyEvents, UpdateEvent, ArchiveEvents, GetSpecificBarangayEvent, getAllEvents};
+module.exports = { GetBarangayEvents, CreateEvents, GetAllOpenBrgyEvents, UpdateEvent, ArchiveEvents, GetSpecificBarangayEvent, getAllEvents };

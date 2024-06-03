@@ -17,10 +17,9 @@ const GetAllServiceForm = async (req, res) => {
 
 const CreateServiceForm = async (req, res) => {
     try {
-        const { service_doc_id } = req.query;
         const service_form = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(service_doc_id)) {
+        if (!mongoose.Types.ObjectId.isValid(service_form.services)) {
             return res.status(400).json({ error: "Not Valid Brgy Service" });
         }
 

@@ -54,7 +54,7 @@ const CreateRequest = async (req, res) => {
         const brgys = await BrgyInfo.find({}).sort({ createdAt: 1 }).exec();
 
         const index = brgys.findIndex((item) => item.brgy === request.brgy) + 1;
-        const request_id = GenerateID(index + 1, "requests", increment + 1);
+        const request_id = GenerateID(index + (index === -1 ? 1 : 0), "requests", increment + 1);
         const folder_id = request.request_folder_id === '' ? '' : await CreateFolder(request_id, request.request_folder_id);
 
         if (files) {
